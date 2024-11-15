@@ -1,12 +1,13 @@
 <template>
   <div>
     <h1>{{ message }}</h1>
-    <button @click="fetchMessage">Fetch Contract Value</button>
+    <button @click="getNumber">Get Contract Number</button>
+    <button @click="increment">Increment</button>
   </div>
 </template>
 
 <script>
-import { getContractValue } from "@/blockchain/contractService";
+import { getContractValue, incrementCounter} from "@/blockchain/contractService";
 
 export default {
   data() {
@@ -15,15 +16,27 @@ export default {
     };
   },
   async mounted() {
-    await this.fetchMessage();
+    await this.getNumber();
   },
   methods: {
-    async fetchMessage() {
+    async getNumber() {
       const value = await getContractValue();
       if (value) {
         this.message = value;
       } else {
         this.message = "データの取得に失敗しました．";
+      }
+    },
+    async increment() {
+      try {
+        const tx = await incrementCounter();
+        if (tx) {
+          console.log("increment()実行成功:", tx.hash);
+        } else {
+          console.error("increment()の呼び出しに失敗しました");
+        }
+      } catch (error) {
+        console.error("Vueコンポーネントでのエラー:", error);
       }
     }
   }
