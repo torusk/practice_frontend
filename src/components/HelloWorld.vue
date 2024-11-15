@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { getContractValue, incrementCounter} from "@/blockchain/contractService";
+import { numberService, incrementService} from "@/blockchain/contractService";
 
 export default {
   data() {
@@ -20,7 +20,7 @@ export default {
   },
   methods: {
     async getNumber() {
-      const value = await getContractValue();
+      const value = await numberService();
       if (value) {
         this.message = value;
       } else {
@@ -29,7 +29,7 @@ export default {
     },
     async increment() {
       try {
-        const tx = await incrementCounter();
+        const tx = await incrementService();
         if (tx) {
           console.log("increment()実行成功:", tx.hash);
         } else {

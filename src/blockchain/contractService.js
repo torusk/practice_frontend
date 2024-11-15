@@ -6,18 +6,8 @@ const contractAddress = process.env.VUE_APP_CONTRACT_ADDRESS;
 const contractABI = contractData.abi;
 
 
-export async function getContractValue() {
-    try {
-        const contract = new ethers.Contract(contractAddress, contractABI, provider);
-        const value = await contract.number();
-        return value.toString();
-    } catch (error) {
-        console.error("エラーが発生しました:", error);
-        return null;
-    }
-}
 
-export async function connectWallet() {
+async function _connectWallet() {
     try {
         const { ethereum } = window;
         if (!ethereum) {
@@ -31,9 +21,20 @@ export async function connectWallet() {
     }
 }
 
-export async function incrementCounter() {
+export async function numberService() {
     try {
-        const signer = await connectWallet();
+        const contract = new ethers.Contract(contractAddress, contractABI, provider);
+        const value = await contract.number();
+        return value.toString();
+    } catch (error) {
+        console.error("エラーが発生しました:", error);
+        return null;
+    }
+}
+
+export async function incrementService() {
+    try {
+        const signer = await _connectWallet();
         if (!signer) throw new Error("ウォレットが接続されていません");
 
         const contractWithSigner = new ethers.Contract(contractAddress, contractABI, signer);
