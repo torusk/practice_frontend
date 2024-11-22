@@ -11,16 +11,19 @@
 </template>
 
 <script>
+import { ethers } from "ethers";
 import { numberService, incrementService, registAddressService, getRegisteredAddressesService } from "@/blockchain/contractService";
 
 export default {
   data() {
     return {
+      inputText: "",
       message: "Fetching data..."
     };
   },
   async mounted() {
     // await this.getNumber();
+    await this.getConnectedAddress(); 
   },
   methods: {
     async getNumber() {
@@ -65,6 +68,24 @@ export default {
         this.message = value;
       } else {
         this.message = "データの取得に失敗しました．";
+      }
+    },
+    async getConnectedAddress() {
+      try {
+        // MetaMaskのプロバイダーを取得
+        const provider = new ethers.BrowserProvider(window.ethereum);
+
+        // ユーザーにウォレット接続を要求
+        const accounts = await provider.send("eth_requestAccounts", []);
+        if (accounts && accounts.length > 0) {
+          // 最初のアカウントを取得し、テキストボックスにセット
+          this.inputText = accounts[0];
+          console.log("Connected MetaMask address:", this.inputText);
+        } else {
+          console.warn("MetaMaskでアカウントが見つかりませんでした．");
+        }
+      } catch (error) {
+        console.error("MetaMask接続中にエラーが発生しました:", error);
       }
     }
   }
