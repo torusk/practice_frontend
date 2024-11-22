@@ -3,11 +3,15 @@
     <h1>{{ message }}</h1>
     <button @click="getNumber">Get Contract Number</button>
     <button @click="increment">Increment</button>
+    <br /><br />
+    <input type="text" v-model="inputText" placeholder="Enter text here" />
+    <button @click="registAddress">Register address</button>
+    <button @click="getRegisteredAddresses">Address list</button>
   </div>
 </template>
 
 <script>
-import { numberService, incrementService} from "@/blockchain/contractService";
+import { numberService, incrementService, registAddressService, getRegisteredAddressesService } from "@/blockchain/contractService";
 
 export default {
   data() {
@@ -16,7 +20,7 @@ export default {
     };
   },
   async mounted() {
-    await this.getNumber();
+    // await this.getNumber();
   },
   methods: {
     async getNumber() {
@@ -37,6 +41,30 @@ export default {
         }
       } catch (error) {
         console.error("Vueコンポーネントでのエラー:", error);
+      }
+    },
+    async registAddress() {
+      if (this.inputText) {
+        this.message = this.inputText;
+        console.log("Registered address:", this.inputText);
+        
+        const tx = await registAddressService(this.inputText);        
+        if (tx) {
+          console.log("registAddressService()実行成功:", tx.hash);
+        } else {
+          console.error("registAddressService()の呼び出しに失敗しました");
+        }
+      } else {
+        this.message = "アドレスを入力してください．";
+        console.warn("入力が空です．");
+      }
+    },
+    async getRegisteredAddresses() {
+      const value = await getRegisteredAddressesService();
+      if (value) {
+        this.message = value;
+      } else {
+        this.message = "データの取得に失敗しました．";
       }
     }
   }
