@@ -63,6 +63,12 @@ export async function registAddressService(address) {
         }
 
         const contractWithSigner = new ethers.Contract(contractAddress, contractABIAssetManager, signer);
+        
+        contractWithSigner.on("AddressRegistered", (registeredAddress) => {
+            console.log("イベント：：登録されたアドレス:", registeredAddress);
+            alert(`アドレスが登録されました: ${registeredAddress}`);
+        });
+
         const tx = await contractWithSigner.registAddress(address);
         console.log("トランザクション送信中:", tx.hash);
 
