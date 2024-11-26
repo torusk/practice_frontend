@@ -52,7 +52,7 @@ export default {
     },
     async registAddress() {
       if (this.inputText) {
-        this.message = this.inputText;
+        this.message = "アドレス登録中．．．：" + this.inputText;
         console.log("Registered address:", this.inputText);
 
         const tx = await registAddressService(this.inputText);
@@ -69,7 +69,7 @@ export default {
     async getRegisteredAddresses() {
       const value = await getRegisteredAddressesService();
       if (value) {
-        this.message = value;
+        this.message = "登録済みアドレス：" + value;
       } else {
         this.message = "データの取得に失敗しました．";
       }
@@ -94,7 +94,7 @@ export default {
     },
     async addAsset() {
       if (this.inputTextAsset) {
-        this.message = this.inputTextAsset;
+        this.message = "資産登録中．．．："+this.inputTextAsset;
 
         const tx = await addAssetService(this.inputTextAsset);
         if (tx) {
