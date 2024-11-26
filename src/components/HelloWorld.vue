@@ -7,12 +7,16 @@
     <input type="text" v-model="inputText" placeholder="Enter text here" />
     <button @click="registAddress">Register address</button>
     <button @click="getRegisteredAddresses">Address list</button>
+    <br /><br />
+    <input type="text" v-model="inputTextAsset" placeholder="Enter text here" />
+    <button @click="addAsset">Add asset</button>
+    <button @click="getAsset">Load asset</button>
   </div>
 </template>
 
 <script>
 import { ethers } from "ethers";
-import { numberService, incrementService, registAddressService, getRegisteredAddressesService } from "@/blockchain/contractService";
+import { numberService, incrementService, registAddressService, getRegisteredAddressesService, addAssetService, getAssetService } from "@/blockchain/contractService";
 
 export default {
   data() {
@@ -23,7 +27,7 @@ export default {
   },
   async mounted() {
     // await this.getNumber();
-    await this.getConnectedAddress(); 
+    await this.getConnectedAddress();
   },
   methods: {
     async getNumber() {
@@ -50,8 +54,8 @@ export default {
       if (this.inputText) {
         this.message = this.inputText;
         console.log("Registered address:", this.inputText);
-        
-        const tx = await registAddressService(this.inputText);        
+
+        const tx = await registAddressService(this.inputText);
         if (tx) {
           console.log("registAddressService()実行成功:", tx.hash);
         } else {
@@ -87,6 +91,37 @@ export default {
       } catch (error) {
         console.error("MetaMask接続中にエラーが発生しました:", error);
       }
+    },
+    async addAsset() {
+      if (this.inputTextAsset) {
+        this.message = this.inputTextAsset;
+
+        const tx = await addAssetService(this.inputTextAsset);
+        if (tx) {
+          console.log("addAssetService()実行成功:", tx.hash);
+        } else {
+          console.error("addAssetService()の呼び出しに失敗しました");
+        }
+      } else {
+        this.message = "登録したい資産額を入力してください．";
+        console.warn("入力が空です．");
+      }
+    },
+    async getAsset() {
+      if (this.inputTextAsset) {
+        this.message = this.inputTextAsset;
+
+        const value = await getAssetService(this.inputTextAsset);
+        if (value) {
+          this.message = "address: "+this.inputTextAsset + " 資産額: " + value;
+        } else {
+          this.message = "データの取得に失敗しました．";
+        }
+      } else {
+        this.message = "アドレスを入力してください．";
+        console.warn("入力が空です．");
+      }
+      
     }
   }
 };

@@ -57,13 +57,13 @@ export async function registAddressService(address) {
     try {
         const signer = await _connectWallet();
         if (!signer) throw new Error("ウォレットが接続されていません");
-        
+
         if (!ethers.isAddress(address)) {
             throw new Error("無効なEthereumアドレスが入力されました");
         }
 
         const contractWithSigner = new ethers.Contract(contractAddress, contractABIAssetManager, signer);
-        
+
         contractWithSigner.on("AddressRegistered", (registeredAddress) => {
             console.log("イベント：：登録されたアドレス:", registeredAddress);
             alert(`アドレスが登録されました: ${registeredAddress}`);
@@ -72,7 +72,7 @@ export async function registAddressService(address) {
         const tx = await contractWithSigner.registAddress(address);
         console.log("トランザクション送信中:", tx.hash);
 
-        await tx.wait(); 
+        await tx.wait();
         console.log("トランザクションが完了しました:", tx.hash);
 
         return tx;
@@ -90,6 +90,54 @@ export async function getRegisteredAddressesService() {
         const addressesString = addresses.map((address) => address.toString()).join(", ");
         console.log("登録されているアドレス:", addressesString);
         return addressesString;
+    } catch (error) {
+        console.error("エラーが発生しました:", error);
+        return null;
+    }
+}
+
+export async function addAssetService(amount) {
+    try {
+        console.log("amount:", amount);
+
+        // 引数のチェック：正の整数か確認
+        const parsedAmount = Number(amount); // 数値に変換
+        if (!Number.isInteger(parsedAmount) || parsedAmount <= 0) {
+            throw new Error("資産額は正の整数でなければなりません");
+        }
+
+        const signer = await _connectWallet();
+        if (!signer) throw new Error("ウォレットが接続されていません");
+
+        const contractWithSigner = new ethers.Contract(contractAddress, contractABIAssetManager, signer);
+
+        contractWithSigner.on("AssetUpdated", (updatedAmount) => {
+            console.log("イベント：：登録された資産:", updatedAmount);
+            alert(`資産が追加されました: ${updatedAmount}`);
+        });
+
+        const tx = await contractWithSigner.addAsset(parsedAmount);
+        console.log("トランザクション送信中:", tx.hash);
+
+        await tx.wait();
+        console.log("トランザクションが完了しました:", tx.hash);
+
+        return tx;
+    } catch (error) {
+        console.error("エラーが発生しました:", error);
+        return null;
+    }
+}
+
+export async function getAssetService(address) {
+    try {
+        const contract = new ethers.Contract(contractAddress, contractABIAssetManager, provider);
+        const assetValue = await contract.getAsset(address);
+        console.log("取得した資産額:", assetValue);
+
+        // 資産額を文字列に変換して返す
+        const assetString = assetValue.toString();
+        return assetString;
     } catch (error) {
         console.error("エラーが発生しました:", error);
         return null;
