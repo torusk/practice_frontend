@@ -5,6 +5,8 @@
 npm install
 ```
 
+.env.local.sampleを.env.localとしてコピー
+
 ### Compiles and hot-reloads for development
 ```
 npm run serve
