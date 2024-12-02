@@ -143,3 +143,64 @@ export async function getAssetService(address) {
         return null;
     }
 }
+
+export async function addAssetWithHashService(amount, hash) {
+    try {
+        console.log("amount:", amount, "hash:", hash);
+
+        // 引数のチェック：正の整数か確認
+        const parsedAmount = Number(amount); // 数値に変換
+        if (!Number.isInteger(parsedAmount) || parsedAmount <= 0) {
+            throw new Error("資産額は正の整数でなければなりません");
+        }
+
+        const signer = await _connectWallet();
+        if (!signer) throw new Error("ウォレットが接続されていません");
+
+        const contractWithSigner = new ethers.Contract(contractAddress, contractABIAssetManager, signer);
+
+        contractWithSigner.on("AssetUpdated", (updatedAmount) => {
+            console.log("イベント：：登録された資産:", updatedAmount);
+            alert(`資産が追加されました: ${updatedAmount}`);
+        });
+
+        const tx = await contractWithSigner.addAssetWithHash(parsedAmount, hash);
+        console.log("トランザクション送信中:", tx.hash);
+
+        await tx.wait();
+        console.log("トランザクションが完了しました:", tx.hash);
+
+        return tx;
+    } catch (error) {
+        console.error("エラーが発生しました:", error);
+        return null;
+    }
+}
+
+
+export async function getAssetWithHashService(address) {
+    try {
+        const contract = new ethers.Contract(contractAddress, contractABIAssetManager, provider);
+        const assetValue = await contract.getAsset(address);
+        console.log("取得した資産額:", assetValue);
+
+        // 資産額を文字列に変換して返す
+        const assetString = assetValue.toString();
+
+        const hashValue = await contract.getHash(address);
+        console.log("hashValue:", hashValue);
+
+        const hashString = bytesToHex(hashValue);
+
+        return assetString + " " + hashString;
+
+    } catch (error) {
+        console.error("エラーが発生しました:", error);
+        return null;
+    }
+}
+function bytesToHex(byteArray) {
+    return Array.from(byteArray)
+        .map((byte) => byte.toString(16).padStart(2, "0"))
+        .join("");
+}
