@@ -188,19 +188,17 @@ export async function getAssetWithHashService(address) {
         const assetString = assetValue.toString();
 
         const hashValue = await contract.getHash(address);
-        console.log("hashValue:", hashValue);
+        console.log("hashValue type:", typeof hashValue, "hashValue:", hashValue);
+        let ret = assetString + ": ";
+        for (let i = 0; i < hashValue.length; i++) {
+            console.log("hashValue:", hashValue[i]);
+            ret += hashValue[i] + " ";
+        }
 
-        const hashString = bytesToHex(hashValue);
-
-        return assetString + " " + hashString;
+        return ret;
 
     } catch (error) {
         console.error("エラーが発生しました:", error);
         return null;
     }
-}
-function bytesToHex(byteArray) {
-    return Array.from(byteArray)
-        .map((byte) => byte.toString(16).padStart(2, "0"))
-        .join("");
 }

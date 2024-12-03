@@ -26,7 +26,8 @@
 
 <script>
 import { ethers } from "ethers";
-import { numberService, incrementService, registAddressService, getRegisteredAddressesService, addAssetService, getAssetService, addAssetWithHashService, getAssetWithHashService } from "@/blockchain/contractService";
+import { //numberService, incrementService, 
+  registAddressService, getRegisteredAddressesService, addAssetService, getAssetService, addAssetWithHashService, getAssetWithHashService } from "@/blockchain/contractService";
 import { ref } from 'vue';
 
 // HEX文字列をバイト配列に変換する関数
@@ -112,26 +113,26 @@ export default {
     await this.getConnectedAddress();
   },
   methods: {
-    async getNumber() {
-      const value = await numberService();
-      if (value) {
-        this.message = value;
-      } else {
-        this.message = "データの取得に失敗しました．";
-      }
-    },
-    async increment() {
-      try {
-        const tx = await incrementService();
-        if (tx) {
-          console.log("increment()実行成功:", tx.hash);
-        } else {
-          console.error("increment()の呼び出しに失敗しました");
-        }
-      } catch (error) {
-        console.error("Vueコンポーネントでのエラー:", error);
-      }
-    },
+    // async getNumber() {
+    //   const value = await numberService();
+    //   if (value) {
+    //     this.message = value;
+    //   } else {
+    //     this.message = "データの取得に失敗しました．";
+    //   }
+    // },
+    // async increment() {
+    //   try {
+    //     const tx = await incrementService();
+    //     if (tx) {
+    //       console.log("increment()実行成功:", tx.hash);
+    //     } else {
+    //       console.error("increment()の呼び出しに失敗しました");
+    //     }
+    //   } catch (error) {
+    //     console.error("Vueコンポーネントでのエラー:", error);
+    //   }
+    // },
     async registAddress() {
       if (this.inputText) {
         this.message = "アドレス登録中．．．：" + this.inputText;
